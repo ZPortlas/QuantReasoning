@@ -1,0 +1,89 @@
+---
+title: "Problem Set 2"
+author: "Zoe Portlas"
+date: "January 25, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Question 1
+```{r}
+r <- log(2)/109
+log(10^12)/r
+```
+It would take about 4345 days and 2 hours for the cancer to reach a lethal number of cells.
+
+### Question 2
+$$\frac{dN}{dt} = b\frac{N}{N+M} -d$$
+
+To find equilibrium points, set equal to zero and solve for N.
+
+$$N = \frac{dM}{b-d}$$ or $$N = 0$$
+
+To find stability, take the derivative of the original equation and set $N = \frac{dM}{b-d}$.
+
+$$\frac{dF}{dN} = b \left (\frac{M}{(N+M)^{2}}\right )$$
+
+##### Equilibrium point 1
+
+$$\left. \frac{dF}{dN}\right|_{N=\frac{dM}{b-d}} = b \left (\frac{M}{(\left (\frac{dM}{b-d} \right )+M)^{2}}\right ) = \frac {(b-d)^{2}}{bM}$$
+
+The equilibrium point is stable if $\frac {dF}{dN} < 0$.
+
+$\left (b-d \right )^{2}$ is always greater than or equal to 0. When $b \neq d$ and $bM < 0$, the equilibrium point is stable, i.e. never because it is not possible to have a negative birth rate or a negative number of males.
+
+##### Equilibrium point 2
+
+$$\left. \frac{dF}{dN}\right|_{N=0} = b \left (\frac{M}{(0+M)^{2}}\right ) = \frac{b}{M}$$
+Not stable because can't be <0?
+
+Allee effect: Even if population is slightly higher than 0, the population won't be able to recover at a certain point because there were no suitable mates for the females.
+
+### Question 3
+```{r}
+require(deSolve)
+## Loading required package: deSolve
+# Initial values
+state <- c(N=10)
+times <- seq(0,100,by=0.1)
+
+# Parameters
+parameters <- c(b = 2.4,c=0.02,M=50,d=0.2)
+
+# Model
+sterile_insect <- function(t,state,parameters){
+  with(as.list(c(state,parameters)),{
+       dN <- b*N/(N+M) - d - c*N
+      list(c(dN))   
+  })}
+
+# Solve model and plot results
+out <- ode(y = state,times=times,func=sterile_insect,parms=parameters)
+par(mfrow=c(1,1))
+plot(out[,1],out[,2],ylab='N',xlab='time',las=1)
+```
+```{r}
+# Straight line at:
+# N0 <- 0 # given eq. point
+N1 <- 10
+N2 <- 50
+
+#parameters
+b = 2.4
+c=0.02
+M=50
+d=0.2
+
+# coordinates
+x <-c(0,10,50)
+y <- c(0,0,0)
+points <- cbind(x,y)
+
+curve(b*x/(x+M)-d-c*x, from = -50, to = 100, xlab = "x", ylab = "y")
+points(points)
+
+# I couldn't figure out how to make the open and closed points
+```
